@@ -1,18 +1,17 @@
 import { useReactMediaRecorder } from "react-media-recorder";
 import TypographyH1 from "./TypographyH1";
 import { 
-    Circle, 
     CirclePause, 
     CirclePlay, 
     CircleStop, 
+    Clapperboard, 
     Download, 
-    Film, 
-    Mic, 
-    MicOff 
+    Film
 } from "lucide-react";
 import VideoPreview from "./VideoPreview";
 import RecordingPreview from "./RecordingPreview";
 import { useRef } from "react";
+import AudioControl from "./AudioControl";
 
 export default function RecordView() {
     const { 
@@ -59,42 +58,57 @@ export default function RecordView() {
             color: "var(--color-white)",
             className: "hover:cursor-pointer bg-red-400 p-1 rounded"
         }
+        const stopRecordingButton = (
+            <CircleStop {...controlsProps} onClick={stopRecording} />
+        ); 
+        const audioControlButton = (
+            <AudioControl 
+                isAudioMuted={isAudioMuted}
+                muteAudio={muteAudio}
+                unMuteAudio={unMuteAudio}
+                iconProps={{...controlsProps}}
+            />
+        );
+        const startRecordingButton = (
+            <Clapperboard 
+                {...controlsProps}
+                onClick={handleStartRecording} 
+            />
+        );
 
         switch(status) {
             case "recording":
                 return (
                     <>
-                        <CircleStop {...controlsProps} onClick={stopRecording} />
-                        { isAudioMuted ? (
-                            <MicOff {...controlsProps} onClick={unMuteAudio} />
-                        ) : (
-                            <Mic {...controlsProps} onClick={muteAudio} />
-                        ) }
-                        <CirclePause {...controlsProps} onClick={pauseRecording} />
+                        {stopRecordingButton}
+                        {audioControlButton}
+                        <CirclePause 
+                            {...controlsProps} 
+                            onClick={pauseRecording} 
+                        />
                     </>
                 );
             case "paused":
                 return (
                     <>
-                        <CircleStop {...controlsProps} onClick={stopRecording} />
-                        { isAudioMuted ? (
-                            <MicOff {...controlsProps} onClick={unMuteAudio} />
-                        ) : (
-                            <Mic {...controlsProps} onClick={muteAudio} />
-                        ) }
-                        <CirclePlay {...controlsProps} onClick={resumeRecording} />
+                        {stopRecordingButton}
+                        {audioControlButton}
+                        <CirclePlay 
+                            {...controlsProps} 
+                            onClick={resumeRecording} 
+                        />
                     </>
                 );
             case "idle":
                 return (
                     <>
-                        <Circle {...controlsProps} onClick={handleStartRecording} />
+                        {startRecordingButton}
                     </>
                 );
             case "stopped":
                 return (
                     <>
-                        <Circle {...controlsProps} onClick={handleStartRecording} />
+                        {startRecordingButton}
                         <a 
                             href={ mediaBlobUrl ?? undefined }
                             ref={downloadRef}
